@@ -37,7 +37,7 @@ import other.Tile;
  **/
 public class AStar {
 	
-	private static final int STRAIGHT_MOVE_COST = 10;
+	//private static final int STRAIGHT_MOVE_COST = 10;    unused
 	private static final int DIAGONAL_MOVE_COST = 14;
 	
 	private ArrayList<Node> OPENLIST = new ArrayList<Node>();

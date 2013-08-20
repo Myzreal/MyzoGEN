@@ -32,11 +32,7 @@ import parameters.IOFlags;
  * For more details, see the MyzoGEN's constructor head commentary.
  * Calling the constructor will automatically start the generation and output will
  * be printed to the console, more or less detailed depending on your preferences.
- * It is up to you how you use it. This demo file just calls it from the code, without
- * taking any parameters from the user. You can create a console application that
- * will take the parameters or a visual UI or any other method of gather input - 
- * later you just need to pass it in the constructor of MyzoGEN and
- * it will work.
+ * It is up to you how you use it.
  * 
  * ================================ HOW IT WORKS ================================
  * At the start the generator creates an empty Output object and fills it with

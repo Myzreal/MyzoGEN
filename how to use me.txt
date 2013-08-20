@@ -1,0 +1,10 @@
+Currently you have to edit the source files to make changes in the generated terrain.
+
+You need to open the main.Main source java file and follow the instructions there.
+
+For more detailed info on what each parameter does see main.MyzoGEN source file.
+
+I will implement some sort of user interface in the near future (probably a config file) but for now - 
+you have to edit the source file. Sorry for the inconvenience :(
+
+NOTE: The newest source is always in source - eclipse project folder. MyzoGEN-x.x-source.jar contains the last stable code.
