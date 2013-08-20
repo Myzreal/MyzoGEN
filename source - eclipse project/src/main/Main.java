@@ -1,6 +1,6 @@
 package main;
 
-import output.OwMode;
+import output.OwfMode;
 import output.SaveMode;
 import parameters.IOFlags;
 
@@ -9,7 +9,7 @@ import parameters.IOFlags;
  * |                     			MyzoGEN										|
  * | 					by: Radoslaw Skupnik, aka Myzreal						|
  * |																			|
- * |							version: 1.0									|
+ * |							version: 1.1									|
  * +----------------------------------------------------------------------------+
  * 
  * ================================ HOW TO USE ==================================
@@ -72,6 +72,7 @@ import parameters.IOFlags;
  * 2) Create a new .java file in the output package, name it how you want and make it
  *    extends the SaveMode class. Override the save() method and the constructor.
  *    Make sure that your class constructor calls super(IDENT.YOUR_IDENT);
+ *    Make sure the constructor is public.
  *    
  * 3) All that you need is passed in the save() method parameters. You have an Output object there.
  * 	  You can access the tiles by calling Output.getTile() or Output.getTilesArray().
@@ -87,19 +88,19 @@ import parameters.IOFlags;
 						Param1,
 						Param2,
 						...
-						ParamX)
+						ParamN)
 				});
  *    
  *================================ BIOMES DIAGRAM ================================
  * Biomes diagram is the biomes.png file that can be found in resources
  * /src/resources/ inside jar. It acts as a diagram. It should always be set
  * to the range value of temperature and humidity (default 41). NOTE: CHANGING THIS
- * WILL CURRENTLY BREAK THE GENERATOR. The vertical dimension of the image servers as
+ * WILL CURRENTLY BREAK THE GENERATOR. The vertical dimension of the image serves as
  * humidity - ranging from -20 at the lower-left to 20 at the upper-left. Temperature is
  * horizontal - from 20 at lower-left to -20 at lower-right. The most humid and hot spot
  * is in the upper-left corner and the most dry and cold in the lower-right.
  * The biomes generator takes a value of temperature and humidity that range between
- * -20 and 20 (so 40 values) and picks the according pixel from the diagram image.
+ * -20 and 20 (so 41 values) and picks the according pixel from the diagram image.
  * Based on the pixel color (specified in Biomes class) a biome is decided.
  * This allows to easily change the biomes while visualising it at the same time by
  * altering the pixels in the biomes.png file.
@@ -108,6 +109,11 @@ import parameters.IOFlags;
  * ============================ CURRENT HARD CAPS ================================
  * Rivers amount cannot be larger than 255.
  * Temperature and humidity ranges should not be changed.
+ * 
+ * ========================= VERSION HISTORY =====================================
+ * * 1.0 - this is the base version, released as first. Features generating heightmap,
+ *   floors, temperature, humidity, biomes and rivers based on a modified A* algorithm.
+ *   Possible saving formats: .ow;
  * 
  * =========================== THIRD PARTY LIBRARIES ==============================
  * Apache Commons IO - http://commons.apache.org/proper/commons-io/
@@ -174,7 +180,7 @@ public class Main {
 				true,
 				/* saving modes/formats */
 				new SaveMode[] {					// This must contain a SaveMode[] array.
-					new OwMode(						// OW mode will save the output as an .ow file (OutlanderWorld file).
+					new OwfMode(						// OWF mode will save the output as an .owf file (OutlanderWorldFragmented file).
 						"Map created by Myzreal.",  // An additional description that will be contained in the map file.
 						true)						// Compression switch.
 				});

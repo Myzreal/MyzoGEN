@@ -14,7 +14,7 @@ import other.Tile;
 import other.Tiles;
 
 /**
- * OW format stands for OutlanderWorld format.
+ * OWF format stands for OutlanderWorldFragmented format.
  * NOTES:
  * 		* String is preceeded by a short value indicating the following string's length.
  * 
@@ -27,18 +27,12 @@ import other.Tiles;
  * | world_name	|	String	| string+2  |  name of the world.						|
  * | world_width|	int		|	 32b	|	width of the world						|
  * |world_height|	int		|	 32b	|	height of the world						|
- * |compressed	|	bool	|	 16b	|	whether compression is applied
+ * |compressed	|	bool	|	 16b	|	whether compression is applied          |
  * |   descr.	|   String	| string+2	| additional descr. by creator				|
- * +-------------------------------- TILES -----------------------------------------+
- * +----------------- THIS INFORMATION IS ALWAYS PRESENT ---------------------------+
- * | marker		|	byte	|	 8b		|		0xFF								|
+ * +>>>>-------------------------- CHUNKS --------------------------------------<<<<+
+ * | ident.		|	byte	|	 8b		|  an iden. that a new chunk starts: 0xFE	|
  * | pos_x		|	short	|	 16b	|	Point.x position						|
  * | pos_y		|	short	|	 16b	|	Point.y position						|
- * +-THIS INFO IS ONLY PRESENT IF FLOOR != 1 && BIOME != MODERATE && TYPE != GRASS--+
- * +----------- if compression is false then this info is always present -----------+
- * | floor		|	byte	|	 8b		|  a byte indicating the floor				|
- * | biome		|	byte	|	 8b		|  a byte indicating the biome				|
- * | type		|	byte	|    8b		|  a byte indicating the tile type			|
  * +--------------------------------------------------------------------------------+
  * 
  * ===================================== LICENSE =================================
@@ -62,9 +56,9 @@ import other.Tiles;
  * 
  * @author Radoslaw Skupnik, aka "Myzreal"
  **/
-public class OwMode extends SaveMode {
+public class OwfMode extends SaveMode {
 
-	private final short VERSION = 2;
+	private final short VERSION = 1;
 	
 	private String filepath;
 	private ByteBuffer tempBuffer;
@@ -72,17 +66,17 @@ public class OwMode extends SaveMode {
 	private String description;
 	private boolean compression;
 	
-	public OwMode(String description, boolean compression) {
-		super(IDENT.OW_FORMAT);
+	public OwfMode(String description, boolean compression) {
+		super(IDENT.OWF_FORMAT);
 		this.description = description;
 		this.compression = compression;
 	}
 
 	@Override
 	public void save(Output output, String name, int chunksX, int chunksY) {
-		this.filepath = "output/"+name+"/build/"+name+".ow";
+		this.filepath = "output/"+name+"/build/"+name+".owf";
 		
-		System.out.println(":: OutlanderWorld format (.ow format) ::");
+		System.out.println(":: OutlanderWorldFragmented format (.owf format) ::");
 		System.out.println(": The file will be located in: "+filepath);
 		
 		File f = new File(filepath);
@@ -90,8 +84,9 @@ public class OwMode extends SaveMode {
 		
 		int dimx = chunksX * MyzoGEN.DIMENSION_X;
 		int dimy = chunksY * MyzoGEN.DIMENSION_Y;
+		tempBuffer = ByteBuffer.allocate(calcSize(name, description, chunksX, chunksY, output));
 		
-		tempBuffer = ByteBuffer.allocate(calcSize(name, description, output));
+		//Header
 		writeShort(VERSION);
 		writeString(name);
 		writeInt(dimx);
@@ -99,23 +94,55 @@ public class OwMode extends SaveMode {
 		writeBoolean(compression);
 		writeString(description);
 		
-		for (Tile tile : output.getTilesArray().values()) {
-			writeByte((byte) 0xFF);
-			writePoint(tile.origin);
-			if (compression) {
-				if (!(tile.floor == 1 && tile.biome == Biomes.MODERATE && tile.tile == Tiles.GRASS)) {
-					writeByte((byte) tile.floor);
-					writeByte(tile.biome);
-					writeByte(tile.tile);
-				}
-			} else {
-				writeByte((byte) tile.floor);
-				writeByte(tile.biome);
-				writeByte(tile.tile);
+		for (int j = 0; j < chunksY; j++) {
+			for (int i = 0; i < chunksX; i++) {
+				writeChunk(i, j, output);
 			}
 		}
 		
 		push();
+	}
+	
+	/**
+	 * Writes a chunk to the file.
+	 * @param x
+	 * @param y
+	 * @param output
+	 */
+	private void writeChunk(int x, int y, Output output) {
+		writeByte((byte) 0xFE);
+		writePoint(new Point(x, y));
+		for (int j = 0; j < MyzoGEN.DIMENSION_Y; j++) {
+			for (int i = 0; i < MyzoGEN.DIMENSION_X; i++) {
+				Tile t = output.getTile(new Point((x*MyzoGEN.DIMENSION_X)+i, (y*MyzoGEN.DIMENSION_Y)+j));
+				if (t != null) {
+					writeTile(t);
+				} else {
+					System.out.println("OWF FORMAT CRITICAL ERROR: Tile not found at "+(new Point((x*MyzoGEN.DIMENSION_X)+i, (y*MyzoGEN.DIMENSION_Y)+j)));
+					return;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Writes a tile to the file.
+	 * @param tile
+	 */
+	private void writeTile(Tile tile) {
+		writeByte((byte) 0xFF);
+		writePoint(tile.origin);
+		if (compression) {
+			if (!(tile.floor == 1 && tile.biome == Biomes.MODERATE && tile.tile == Tiles.GRASS)) {
+				writeByte((byte) tile.floor);
+				writeByte(tile.biome);
+				writeByte(tile.tile);
+			}
+		} else {
+			writeByte((byte) tile.floor);
+			writeByte(tile.biome);
+			writeByte(tile.tile);
+		}
 	}
 	
 	private void writeBoolean(boolean input) {
@@ -167,8 +194,10 @@ public class OwMode extends SaveMode {
 	 * @param output
 	 * @return
 	 */
-	private int calcSize(String name, String desc, Output output) {
+	private int calcSize(String name, String desc, int chunksX, int chunksY, Output output) {
 		int out = 0;
+		
+		//Header
 		out += 2;
 		out += name.length();
 		out += 2;
@@ -177,6 +206,9 @@ public class OwMode extends SaveMode {
 		out += 1;
 		out += desc.length();
 		out += 2;
+		
+		//Chunks and tiles
+		out += (chunksX * chunksY) * 5;
 		for (Tile tile : output.getTilesArray().values()) {
 			out += 5;
 			if (compression) {
@@ -185,6 +217,7 @@ public class OwMode extends SaveMode {
 				}
 			} else out += 3;
 		}
+		
 		return out;
 	}
 }
