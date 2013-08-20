@@ -4,7 +4,9 @@
   
   OVERVIEW IMAGE: http://i.imgur.com/DXVU5Ng.png
   
-  == HOW TO USE
+  OPEN IN NOTEPAD FOR MORE CLARITY.
+  
+  == HOW TO USE 
   MyzoGEN class is the main and only entrance to the generator.
   It acts as an interface and takes a great load of parameters in the constructor.
   These parameters decide how the generator will act.
