@@ -1,13 +1,10 @@
-  +----------------------------------------------------------------------------+
-  |                     	           MyzoGEN								   |
-  | 				        by: Radoslaw Skupnik, aka Myzreal		   		   |
-  |																               |
-  |						             version: 1.0						       |
-  +----------------------------------------------------------------------------+
+  MyzoGEN								   
+  by: Radoslaw Skupnik, aka Myzreal
+  version: 1.0
   
   OVERVIEW IMAGE: http://i.imgur.com/DXVU5Ng.png
   
-  ================================ HOW TO USE ==================================
+  == HOW TO USE
   MyzoGEN class is the main and only entrance to the generator.
   It acts as an interface and takes a great load of parameters in the constructor.
   These parameters decide how the generator will act.
@@ -22,7 +19,7 @@
   it will work.
   Output will be saved in the "output/<world_name>/" folder.
   
-  ================================ HOW IT WORKS ================================
+  == HOW IT WORKS
   At the start the generator creates an empty Output object and fills it with
   default-state tiles (floor 1, grass, temperature and humidity 0, etc.).
   The tiles are generated in chunks of 32x32 pixels/tiles.
@@ -60,7 +57,7 @@
      segment if it will produce a visual image, this final segment takes the Output object
      with all its data and saves it in the specified formats.
      
- ======================= HOW TO CREATE YOUR OWN SAVING FORMAT======================
+ == HOW TO CREATE YOUR OWN SAVING FORMAT
   1) Edit the output.SaveMode abstract class and add your own IDENT to the enum there. Like this:
   		public enum IDENT {
 			OWF_FORMAT, OW_FORMAT, YOUR_IDENT;
@@ -87,7 +84,7 @@
 						ParamX)
 				});
      
- ================================ BIOMES DIAGRAM ================================
+ == BIOMES DIAGRAM
   Biomes diagram is the biomes.png file that can be found in resources
   /src/resources/ inside jar. It acts as a diagram. It should always be set
   to the range value of temperature and humidity (default 41). NOTE: CHANGING THIS
@@ -102,15 +99,15 @@
   altering the pixels in the biomes.png file.
   WARNING: The pixels' colors must be EXACTLY those that are specified in Biomes class.
   
-  ============================ CURRENT HARD CAPS ================================
+  ==CURRENT HARD CAPS
   Rivers amount cannot be larger than 255.
   Temperature and humidity ranges should not be changed.
   
-  =========================== THIRD PARTY LIBRARIES ==============================
+  == THIRD PARTY LIBRARIES
   Apache Commons IO - http://commons.apache.org/proper/commons-io/
   Libnoise - http://libnoise.sourceforge.net/
   
-  ===================================== LICENSE =================================
+  == LICENSE
   Copyright 2013 Radoslaw Skupnik.
   
   This program is free software; you can redistribute it and/or modify
@@ -127,4 +124,5 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   
-  @author Radoslaw Skupnik, aka "Myzreal"
+  == AUTHOR
+  Radoslaw Skupnik, "Myzreal".
