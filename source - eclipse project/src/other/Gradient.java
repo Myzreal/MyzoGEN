@@ -35,7 +35,7 @@ public class Gradient {
 		gradientColors = new ColorCafe[16];
 		gradientPoints[0] = -1.0000;
 		gradientColors[0] = new ColorCafe(0, 0, 0, 255);
-		gradientPoints[1] = fSet.floorLevels[0] - 0.0001;
+		gradientPoints[1] = fSet.floorLevels[0] - 0.0001d;
 		gradientColors[1] = new ColorCafe(0, 0, 0, 255);
 		gradientPoints[2] = fSet.floorLevels[0];
 		gradientColors[2] = new ColorCafe(144, 144, 144, 255);

@@ -88,7 +88,7 @@ public class BiomesGenerator {
 					for (int i = 0; i < chunksX * MyzoGEN.DIMENSION_X; i++) {
 						for (int j = 0; j < chunksY * MyzoGEN.DIMENSION_Y; j++) {
 							Color pixel = new Color(tempImage.getRGB(i, j));
-							MyzoGEN.getOutput().getTile(new Point(i, j)).biome = Utils.pixelToBiome(pixel);
+							MyzoGEN.getOutput().getTile(new Point(i, j)).setBiomeAndType(Utils.pixelToBiome(pixel));
 						}
 					}
 				} else return "BiomesGenerator critical error - the loaded temperature map does not match the specified dimensions. Loaded file is: "+tempImage.getWidth()+"x"+tempImage.getHeight()+
@@ -108,10 +108,8 @@ public class BiomesGenerator {
 			biomesImage = new BufferedImage(chunksX * MyzoGEN.DIMENSION_X, chunksY * MyzoGEN.DIMENSION_Y, BufferedImage.TYPE_INT_ARGB);
 		
 		if (loadBiomesPNG()) {
-			if (details) System.out.println("Biomes PNG loaded.");
-			if (details) System.out.println("Caluclating biomes tile-by-tile. This may take some time.");
 			for (Tile tile : MyzoGEN.getOutput().getTilesArray().values()) {
-				tile.biome = Biomes.calculateBiome(biomesPNG, tile.temperature, tile.humidity);
+				tile.setBiomeAndType(Biomes.calculateBiome(biomesPNG, tile.temperature, tile.humidity));
 				
 				if (ioflags.SAVE && biomesImage != null) {
 					biomesImage.setRGB(tile.origin.x, tile.origin.y, Biomes.biomeToColor(tile.biome).getRGB());

@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import main.MyzoGEN;
 import other.Point;
 import other.Tile;
+import other.Tiles;
 import parameters.IOFlags;
 import utils.Utils;
 import astar.ASPoint;
@@ -111,9 +112,12 @@ public class RiversGenerator {
 						for (int j = 0; j < chunksY * MyzoGEN.DIMENSION_Y; j++) {
 							Color pixel = new Color(tempImage.getRGB(i, j), true);
 							if (pixel.getBlue() == 255) {
-								MyzoGEN.getOutput().getTile(new Point(i, j)).river = true;
-								if (pixel.getAlpha() <= 254)
+								MyzoGEN.getOutput().getTile(new Point(i, j)).tile = Tiles.WATER;
+								if (pixel.getAlpha() <= 254) {
+									MyzoGEN.getOutput().getTile(new Point(i, j)).tile = Tiles.WATER;
+									MyzoGEN.getOutput().getTile(new Point(i, j)).river = true;
 									MyzoGEN.getOutput().getTile(new Point(i, j)).riverID = 254 - pixel.getAlpha();
+								}
 							}
 						}
 					}
@@ -144,6 +148,7 @@ public class RiversGenerator {
 				for (ASPoint asp : path) {
 					Tile t = MyzoGEN.getOutput().getTile(new Point(asp.x, asp.y));
 					if (t != null) {
+						t.tile = Tiles.WATER;
 						t.river = true;
 						t.riverID = rivnum;
 						
@@ -184,7 +189,8 @@ public class RiversGenerator {
 		Point[] surrPoints = Utils.getSurroundingPoints(tile.origin);
 		for (Point p : surrPoints) {
 			Tile t = MyzoGEN.getOutput().getTile(p);
-			if (t != null && t.riverID == -1) {
+			if (t != null && t.riverID == -1 && t.floor == tile.floor) {
+				t.tile = Tiles.WATER;
 				t.river = true;
 				t.riverID = rivnum;
 				
@@ -192,7 +198,8 @@ public class RiversGenerator {
 					Point[] surrPoints2 = Utils.getSurroundingPoints(p);
 					for (Point p2 : surrPoints2) {
 						Tile t2 = MyzoGEN.getOutput().getTile(p2);
-						if (t2 != null && t2.riverID == -1) {
+						if (t2 != null && t2.riverID == -1 && t2.floor == tile.floor) {
+							t2.tile = Tiles.WATER;
 							t2.river = true;
 							t2.riverID = rivnum;
 						}
@@ -229,6 +236,7 @@ public class RiversGenerator {
 				
 				if (okay) {
 					rivers.put(c, p);
+					t.tile = Tiles.WATER;
 					t.river = true;
 					t.riverID = c;
 					c++;
@@ -246,8 +254,12 @@ public class RiversGenerator {
 	private void findRiverEndings() {
 		if (details) System.out.println("Looking for possible river endings...");
 		for (Tile tile : MyzoGEN.getOutput().getTilesArray().values()) {
+			if (tile.origin.x == 5 && tile.origin.y == 33) {
+				System.out.println(tile);
+				System.out.println(tile.height+" < "+MyzoGEN.getFloorSettings().floorLevels[0]);
+			}
 			if (tile.height < MyzoGEN.getFloorSettings().floorLevels[0] && !tile.river) {
-				tile.river = true;
+				tile.tile = Tiles.WATER;
 				riverEndings.add(tile.origin);
 			}
 		}
@@ -284,8 +296,8 @@ public class RiversGenerator {
 		BufferedImage riversImage = new BufferedImage(chunksX * MyzoGEN.DIMENSION_X, chunksY * MyzoGEN.DIMENSION_Y, BufferedImage.TYPE_INT_ARGB);
 		
 		for (Tile tile : MyzoGEN.getOutput().getTilesArray().values()) {
-			if (tile.river) {
-				riversImage.setRGB(tile.origin.x, tile.origin.y, new Color(0, 0, 255, 255).getRGB());
+			if (tile.tile == Tiles.WATER) {
+				//riversImage.setRGB(tile.origin.x, tile.origin.y, new Color(0, 0, 255, 255).getRGB());
 				if (tile.riverID != -1)
 					riversImage.setRGB(tile.origin.x, tile.origin.y, new Color(0, 0, 255, 254 - tile.riverID).getRGB());
 				else

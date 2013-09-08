@@ -41,6 +41,7 @@ public class Biomes {
 	public static final Color TUNDRA_COLOR = new Color(0, 255, 255, 255);
 	
 	public static HashMap<Integer, Byte> BIOME_COLORS = new HashMap<Integer, Byte>();
+	public static HashMap<Byte, Byte> BIOME_TILES = new HashMap<Byte, Byte>();
 	
 	static {
 		BIOME_COLORS.put(DESERT_COLOR.getRGB(), DESERT);
@@ -48,6 +49,12 @@ public class Biomes {
 		BIOME_COLORS.put(SWAMP_RAIN_FOREST_COLOR.getRGB(), SWAMP_RAIN_FOREST);
 		BIOME_COLORS.put(MODERATE_COLOR.getRGB(), MODERATE);
 		BIOME_COLORS.put(TUNDRA_COLOR.getRGB(), TUNDRA);
+		
+		BIOME_TILES.put(DESERT, Tiles.SAND_DESERT);
+		BIOME_TILES.put(SAVANNAH, Tiles.SAVANNAH);
+		BIOME_TILES.put(SWAMP_RAIN_FOREST, Tiles.GRASS);
+		BIOME_TILES.put(MODERATE, Tiles.GRASS);
+		BIOME_TILES.put(TUNDRA, Tiles.SNOW);
 	}
 
 	public static String biomeToString(byte b) {

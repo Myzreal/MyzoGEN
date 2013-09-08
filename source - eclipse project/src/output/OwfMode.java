@@ -27,12 +27,27 @@ import other.Tiles;
  * | world_name	|	String	| string+2  |  name of the world.						|
  * | world_width|	int		|	 32b	|	width of the world						|
  * |world_height|	int		|	 32b	|	height of the world						|
- * |compressed	|	bool	|	 16b	|	whether compression is applied          |
  * |   descr.	|   String	| string+2	| additional descr. by creator				|
  * +>>>>-------------------------- CHUNKS --------------------------------------<<<<+
  * | ident.		|	byte	|	 8b		|  an iden. that a new chunk starts: 0xFE	|
  * | pos_x		|	short	|	 16b	|	Point.x position						|
  * | pos_y		|	short	|	 16b	|	Point.y position						|
+ * +>>>>>>>>----------------------- TILES ----------------------------------<<<<<<<<+
+ * +----------------- this information is always present ---------------------------+
+ * | marker		|	byte	|	 8b		|		0xFF								|
+ * | pos_x		|	short	|	 16b	|	Point.x position						|
+ * | pos_y		|	short	|	 16b	|	Point.y position						|
+ * +-this info is only present if FLOOR != 1 && BIOME != MODERATE && TYPE != GRASS--+
+ * +----------- if compression is false then this info is always present -----------+
+ * | floor		|	byte	|	 8b		|  a byte indicating the floor				|
+ * | biome		|	byte	|	 8b		|  a byte indicating the biome				|
+ * | type		|	byte	|    8b		|  a byte indicating the tile type			|
+ * | edge		|	byte	|	 8b		|  the edge border for biomes				|
+ * | corner		|	byte	|	 8b		|  the corner border for biomes				|
+ * | b_type		|	byte	|	 8b		|  the border type for biomes				|
+ * | edge		|	byte	|	 8b		|  the edge border for heights				|
+ * | corner		|	byte	|	 8b		|  the corner border for heights			|
+ * | b_type		|	byte	|	 8b		|  the border type for heights				|
  * +--------------------------------------------------------------------------------+
  * 
  * ===================================== LICENSE =================================
@@ -64,12 +79,10 @@ public class OwfMode extends SaveMode {
 	private ByteBuffer tempBuffer;
 	
 	private String description;
-	private boolean compression;
 	
-	public OwfMode(String description, boolean compression) {
+	public OwfMode(String description) {
 		super(IDENT.OWF_FORMAT);
 		this.description = description;
-		this.compression = compression;
 	}
 
 	@Override
@@ -91,7 +104,6 @@ public class OwfMode extends SaveMode {
 		writeString(name);
 		writeInt(dimx);
 		writeInt(dimy);
-		writeBoolean(compression);
 		writeString(description);
 		
 		for (int j = 0; j < chunksY; j++) {
@@ -132,17 +144,18 @@ public class OwfMode extends SaveMode {
 	private void writeTile(Tile tile) {
 		writeByte((byte) 0xFF);
 		writePoint(tile.origin);
-		if (compression) {
-			if (!(tile.floor == 1 && tile.biome == Biomes.MODERATE && tile.tile == Tiles.GRASS)) {
-				writeByte((byte) tile.floor);
-				writeByte(tile.biome);
-				writeByte(tile.tile);
-			}
-		} else {
-			writeByte((byte) tile.floor);
-			writeByte(tile.biome);
+		writeByte((byte) tile.floor);
+		writeByte(tile.biome);
+		if (tile.wall)
+			writeByte(Tiles.STONE_WALL);		//HARDCODED: if the tile is a wall it's type is set to 32.
+		else
 			writeByte(tile.tile);
-		}
+		writeByte(tile.borderBiomesEdges);
+		writeByte(tile.borderBiomesCorners);
+		writeByte(tile.borderBiomesType);
+		writeByte(tile.borderHeightEdges);
+		writeByte(tile.borderHeightCorners);
+		writeByte(tile.borderHeightType);
 	}
 	
 	private void writeBoolean(boolean input) {
@@ -211,11 +224,7 @@ public class OwfMode extends SaveMode {
 		out += (chunksX * chunksY) * 5;
 		for (Tile tile : output.getTilesArray().values()) {
 			out += 5;
-			if (compression) {
-				if (!(tile.floor == 1 && tile.biome == Biomes.MODERATE && tile.tile == Tiles.GRASS)) {
-					out += 3;
-				}
-			} else out += 3;
+			out += 9;
 		}
 		
 		return out;

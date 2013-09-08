@@ -10,7 +10,9 @@ import javax.imageio.ImageIO;
 import main.MyzoGEN;
 
 import other.Biomes;
+import other.Borders;
 import other.Point;
+import other.Tile;
 import parameters.FloorSettings;
 import parameters.IOFlags;
 import util.ColorCafe;
@@ -102,6 +104,19 @@ public class Utils {
 		
 		return output;
 	}
+	
+	/**
+	 * Changes the Point[] array into a Tile[] array.
+	 * @param input
+	 * @return
+	 */
+	public static Tile[] surroundingPointsToTiles(Point[] input) {
+		Tile[] output = new Tile[input.length];
+		for (int i = 0; i < input.length; i++) {
+			output[i] = MyzoGEN.getOutput().getTile(input[i]);
+		}
+		return output;
+	}
 
 	/**
 	 * Checks an IOFlags object for potential errors.
@@ -163,10 +178,10 @@ public class Utils {
 	}
 	
 	public static int calculateFloor(double height, FloorSettings settings) {
-		int res = 0;
-		for (int i = 0; i < settings.floorLevels.length; i++) {
+		int res = settings.floorLevels.length-1;
+		for (int i = 1; i < settings.floorLevels.length; i++) { //Why start from 1? Because 0 is water level but we don't want it to be a separate floor.
 			if (height < settings.floorLevels[i]) {
-				res = i;
+				res = i-1;
 				break;
 			}
 		}
@@ -227,4 +242,5 @@ public class Utils {
 		int temp=(int)((d*Math.pow(10,c)));
 		return (((double)temp)/Math.pow(10,c));
 	}
+	
 }

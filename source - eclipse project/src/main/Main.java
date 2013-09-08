@@ -145,44 +145,46 @@ public class Main {
 
 		new MyzoGEN(
 				/* general */
-				"Test1",							// Name of the map
-				4,									// Width in chunks (each chunk is 32x32 pixels)
-				4,									// Height in chunks
+				"Test4",							// Name of the map
+				40,									// Width in chunks (each chunk is 32x32 pixels)
+				40,									// Height in chunks
 				/* heightmap */
-				4,									// Seed
+				24,									// Seed
 				8,									// Octaves
 				0.06,								// Frequency
-				new IOFlags(true, true, false),		// PRODUCE, SAVE, LOAD      <--- the same for all the rest below
+				new IOFlags(false, false, true),	// PRODUCE, SAVE, LOAD      <--- the same for all the rest below
 				true,								// Log details              <--- the same for all the rest below - the log boolean always comes after IOFlags
 				/* floor overview */
 				null,								// FloorSettings object for floors overview
-				true,								// Floors Overview ON/OFF switch 
+				false,								// Floors Overview ON/OFF switch 
 				/* temperature */
-				23,									// Seed
+				28,									// Seed
 				1,									// Octaves
 				0.03,								// Frequency
-				new IOFlags(true, true, false),
+				new IOFlags(false, false, true),
 				true,
 				/* humidity */
-				2048,								// Seed
+				2041,								// Seed
 				1,									// Octaves
 				0.03,								// Frequency
-				new IOFlags(true, true, false),
+				new IOFlags(false, false, true),
 				true,
 				/* biomes */
-				new IOFlags(true, true, false),
+				new IOFlags(false, false, true),
 				true,
 				/* rivers */
-				1,									// Number of rivers
-				6,									// Minimum floor the rivers will start at (inclusive)
-				50,									// Minimum manhattan distance between river origins. If you set it too high then you might not get the amount of rivers you specified.
+				40,									// Number of rivers
+				5,									// Minimum floor the rivers will start at (inclusive)
+				15,									// Minimum manhattan distance between river origins. If you set it too high then you might encounter an infinite loop.
+				new IOFlags(true, true, false),
+				true,
+				/* borders */
 				new IOFlags(true, true, false),
 				true,
 				/* saving modes/formats */
 				new SaveMode[] {					// This must contain a SaveMode[] array.
-					new OwfMode(						// OWF mode will save the output as an .owf file (OutlanderWorldFragmented file).
-						"Map created by Myzreal.",  // An additional description that will be contained in the map file.
-						true)						// Compression switch.
+					new OwfMode(					// OWF mode will save the output as an .owf file (OutlanderWorldFragmented file).
+						"Map created by Myzreal.")  // An additional description that will be contained in the map file.
 				});
 	}
 	

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import main.MyzoGEN;
 import other.Point;
 import other.Tile;
+import other.Tiles;
 
 
 /**
@@ -108,7 +109,7 @@ public class AStar {
 		
 		Tile t = MyzoGEN.getOutput().getTile(new Point(chosen.x, chosen.y));
 		if (t != null) {
-			if (t.river && t.riverID != riverID || (chosen.x == 0 || chosen.y == 0 || chosen.x == width-1 || chosen.y == height-1)) {
+			if (t.tile == Tiles.WATER && t.riverID != riverID || (chosen.x == 0 || chosen.y == 0 || chosen.x == width-1 || chosen.y == height-1)) {
 				breakNode = chosen;
 				break;
 			}

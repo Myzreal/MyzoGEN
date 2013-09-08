@@ -7,8 +7,10 @@ import generators.HumidityGenerator;
 import generators.NoiseGenerator;
 import generators.RiversGenerator;
 import generators.TemperatureGenerator;
+import generators.TileBordersGenerator;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import module.Perlin;
 import output.Output;
@@ -22,7 +24,7 @@ import parameters.IOFlags;
  * |                     			MyzoGEN										|
  * | 					by: Radoslaw Skupnik, aka Myzreal						|
  * |																			|
- * |							version: 1.0									|
+ * |							version: 1.1									|
  * +----------------------------------------------------------------------------+
  * 
  * ================================ HOW TO USE ==================================
@@ -154,6 +156,8 @@ public class MyzoGEN {
 	private int				_RiversMinDist					= 30;
 	private IOFlags			_RiversIOFlags					= new IOFlags(false, false, false);
 	private boolean			_RiversLogDetails				= false;
+	private IOFlags			_BordersIOFlags					= new IOFlags(false, false, false);
+	private	boolean			_BordersLogDetails				= false;
 	private SaveMode[]		_SaveModes						= null;
 	
 	/**
@@ -166,6 +170,7 @@ public class MyzoGEN {
 	private HumidityGenerator		_HumidityGenerator			= null;
 	private BiomesGenerator			_BiomesGenerator			= null;
 	private RiversGenerator			_RiversGenerator			= null;
+	private TileBordersGenerator	_BordersGenerator			= null;
 	
 	/**
 	 * Those variables hold the various data that can be produced.
@@ -205,11 +210,13 @@ public class MyzoGEN {
 	 * @param rmind - RiversMinDist - minimum distance between river origins
 	 * @param rlflags - RiversIOFlags
 	 * @param rld - RiversLogDetails
+	 * @param boflags - BordersIOFlags - whether or not borders should be produced
+	 * @param bold - BordersLogDetails
 	 * @param modes - SaveModes - saving modes
 	 */
 	public MyzoGEN(String name, int wscx, int wscy, int seed, int bto, double btf, IOFlags btflags, boolean btld, FloorSettings floorset, boolean floorsov,
 							  int tseed, int toct, double tfreq, IOFlags tflags, boolean tld, int hseed, int hoct, double hfreq, IOFlags hflags, boolean hld,
-							  IOFlags bflags, boolean bld, int rmax, int rminf, int rmind, IOFlags rflags, boolean rld, SaveMode[] modes) {
+							  IOFlags bflags, boolean bld, int rmax, int rminf, int rmind, IOFlags rflags, boolean rld, IOFlags boflags, boolean bold, SaveMode[] modes) {
 		_instance = this;
 		
 		_Name = name;
@@ -239,6 +246,8 @@ public class MyzoGEN {
 		_RiversMinDist = rmind;
 		_RiversIOFlags = rflags;
 		_RiversLogDetails = rld;
+		_BordersIOFlags = boflags;
+		_BordersLogDetails = bold;
 		_SaveModes = modes;
 		
 		generate();
@@ -249,6 +258,8 @@ public class MyzoGEN {
 	 * Once the input from the user has been collected by the constructor, this function takes over.
 	 */
 	private void generate() {
+		long time = System.currentTimeMillis();
+		
 		System.out.println(":: COMMENCING GENERATION OF WORLD: "+_Name+" ::");
 		prepareFolder();
 		_Output = new Output(_WorldSizeChunksX * DIMENSION_X, _WorldSizeChunksY * DIMENSION_Y, true);
@@ -310,6 +321,14 @@ public class MyzoGEN {
 		if (rerr != "No errors.") return;
 		System.out.println("");
 		
+		System.out.println(":: Generating borders ::");
+		_BordersGenerator = new TileBordersGenerator(_Name, _WorldSizeChunksX, _WorldSizeChunksY, _BordersIOFlags, _BordersLogDetails);
+		String boerr = _BordersGenerator.generate();
+		System.out.println(":: Done! ::");
+		System.out.println(":: BordersGenerator result: "+boerr);
+		if (boerr != "No errors.") return;
+		System.out.println("");
+		
 		System.out.println("======= SAVING OUTPUT =======");
 		_OutputSaver = new OutputSaver(_Name, _WorldSizeChunksX, _WorldSizeChunksY);
 		for (SaveMode mode : _SaveModes) {
@@ -318,6 +337,16 @@ public class MyzoGEN {
 		_OutputSaver.setOutput(_Output);
 		_OutputSaver.save();
 		System.out.println("");
+		
+		_Output.debugCheck();
+		
+		long millis = System.currentTimeMillis() - time;
+		System.out.println("Generation time: "+String.format("%d min, %d sec", 
+			    TimeUnit.MILLISECONDS.toMinutes(millis),
+			    TimeUnit.MILLISECONDS.toSeconds(millis) - 
+			    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+			));
+		
 	}
 	
 	/**
