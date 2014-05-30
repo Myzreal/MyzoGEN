@@ -33,13 +33,15 @@ public class Tile {
 	public byte tile = Tiles.GRASS;
 	public boolean river = false;
 	public int riverID = -1;
-	public byte borderBiomesEdges = (byte) 255; //255 indicates there is no border.
+	public byte borderFlagOne = 0;	// Used for biome borders.
+	public byte borderFlagTwo = 0;	// Used for height borders.
+	/**public byte borderBiomesEdges = (byte) 255; //255 indicates there is no border.
 	public byte borderBiomesCorners = (byte) 255;
 	public byte borderBiomesType = (byte) 255;
 	public byte borderHeightEdges = (byte) 255; //255 indicates there is no border.
 	public byte borderHeightCorners = (byte) 255;
 	public byte borderHeightType = (byte) 255;
-	public boolean wall = false;
+	public boolean wall = false;**/
 	
 	public Tile(Point o) {
 		origin = o;
@@ -57,6 +59,6 @@ public class Tile {
 	
 	@Override
 	public String toString() {
-		return "Origin: "+origin+"; Height: "+height+"; Floor: "+floor+"; Temp.: "+temperature+"; Humid.: "+humidity+"; Biome: "+Biomes.biomeToString(biome)+"; Tile: "+Tiles.tileToString(tile)+"; River: "+river+"; RiverID: "+riverID+"; borderBiomeEdge: "+borderBiomesEdges+"; borderBiomesCorners: "+borderBiomesCorners;
+		return "Origin: "+origin+"; Height: "+height+"; Floor: "+floor+"; Temp.: "+temperature+"; Humid.: "+humidity+"; Biome: "+Biomes.biomeToString(biome)+"; Tile: "+Tiles.tileToString(tile)+"; River: "+river+"; RiverID: "+riverID+"; borderFlagOne (biome): "+borderFlagOne+"; borderFlagTwo (height): "+borderFlagTwo;
 	}
 }

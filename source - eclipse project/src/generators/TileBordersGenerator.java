@@ -82,33 +82,38 @@ public class TileBordersGenerator {
 		
 		for (Tile tile : MyzoGEN.getOutput().getTilesArray().values()) {
 			Point[] surrPoints = Utils.getSurroundingPoints(tile.origin);
-			if (!tile.wall) {
+			//if (!tile.wall) {
 				if (isBorderHeight(tile, surrPoints)) {
-					byte be = Borders.calcBorderTypeByTileTypeEdges(tile, surrPoints, false);
+					/**byte be = Borders.calcBorderTypeByTileTypeEdges(tile, surrPoints, false);
 					byte bc = Borders.calcBorderTypeByTileTypeCorners(tile, surrPoints, false);
 					tile.borderHeightEdges = be;
 					tile.borderHeightCorners = bc;
-					tile.borderHeightType = Tiles.STONE_WALL;
+					tile.borderHeightType = Tiles.STONE_WALL;**/
+					
+					tile.borderFlagTwo = Borders.calculateHeightBorder(tile, surrPoints);
 					
 					produceWall(tile, surrPoints, bordersImage);
 					
 					if (ioflags.SAVE) {
-						bordersImage.setRGB(tile.origin.x, tile.origin.y, new Color(0, 255 - tile.borderHeightType, 255 - be, 255 - bc).getRGB());
+						bordersImage.setRGB(tile.origin.x, tile.origin.y, new Color(0, Math.abs(tile.borderFlagTwo), 0, 255).getRGB());
 					}
 				} 
 				
 				if (isBorderBiomes(tile, surrPoints)) {
-					byte be = Borders.calcBorderTypeByTileTypeEdges(tile, surrPoints, true);
+					/**byte be = Borders.calcBorderTypeByTileTypeEdges(tile, surrPoints, true);
 					byte bc = Borders.calcBorderTypeByTileTypeCorners(tile, surrPoints, true);
 					tile.borderBiomesEdges = be;
 					tile.borderBiomesCorners = bc;
-					tile.borderBiomesType = getBorderTypeBiomes(tile, surrPoints);
+					tile.borderBiomesType = getBorderTypeBiomes(tile, surrPoints);**/
+					
+					tile.borderFlagOne = Borders.calculateBiomeBorder(tile, surrPoints);
 					
 					if (ioflags.SAVE) {
-						bordersImage.setRGB(tile.origin.x, tile.origin.y, new Color(255 - be, 255 - tile.borderBiomesType, 0, 255 - bc).getRGB());
+						//System.out.println(tile.borderFlagOne);
+						bordersImage.setRGB(tile.origin.x, tile.origin.y, new Color(Math.abs(tile.borderFlagOne), 0, 0, 255).getRGB());
 					}
 				}
-			}
+			//}
 		}
 		
 		if (ioflags.SAVE && bordersImage != null) {
@@ -129,7 +134,7 @@ public class TileBordersGenerator {
 		boolean out = false;
 		for (Point p : surrPoints) {
 			Tile t = MyzoGEN.getOutput().getTile(p);
-			if (t != null && t.tile != tile.tile && Tiles.tileToPrecedence(t.tile) > Tiles.tileToPrecedence(tile.tile)) {
+			if (t != null && t.tile != tile.tile && Tiles.getPrecedence(t.tile) > Tiles.getPrecedence(tile.tile)) {
 				out = true;
 				break;
 			}
@@ -140,7 +145,7 @@ public class TileBordersGenerator {
 	private byte getBorderTypeBiomes(Tile tile, Point[] surrPoints) {
 		for (Point p : surrPoints) {
 			Tile t = MyzoGEN.getOutput().getTile(p);
-			if (t != null && t.tile != tile.tile && Tiles.tileToPrecedence(t.tile) > Tiles.tileToPrecedence(tile.tile)) {
+			if (t != null && t.tile != tile.tile && Tiles.getPrecedence(t.tile) > Tiles.getPrecedence(tile.tile)) {
 				return t.tile;
 			}
 		}
@@ -168,10 +173,11 @@ public class TileBordersGenerator {
 	private void produceWall(Tile tile, Point[] surrPoints, BufferedImage bordersImage) {
 		Tile t = MyzoGEN.getOutput().getTile(surrPoints[2]);
 		if (t != null && t.floor < tile.floor) {
-			t.wall = true;
-			t.borderBiomesCorners = (byte) 255;
+			//t.wall = true;
+			t.tile = Tiles.STONE_WALL;
+			/**t.borderBiomesCorners = (byte) 255;
 			t.borderBiomesEdges = (byte) 255;
-			t.borderBiomesType = Tiles.STONE_WALL;
+			t.borderBiomesType = Tiles.STONE_WALL;**/
 			
 			if (ioflags.SAVE) {
 				bordersImage.setRGB(t.origin.x, t.origin.y, new Color(0, 0, 224, 255).getRGB());

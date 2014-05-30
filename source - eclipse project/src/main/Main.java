@@ -145,37 +145,37 @@ public class Main {
 
 		new MyzoGEN(
 				/* general */
-				"Test4",							// Name of the map
-				40,									// Width in chunks (each chunk is 32x32 pixels)
-				40,									// Height in chunks
+				"BorderTest",							// Name of the map
+				4,									// Width in chunks (each chunk is 32x32 pixels)
+				4,									// Height in chunks
 				/* heightmap */
 				24,									// Seed
 				8,									// Octaves
 				0.06,								// Frequency
-				new IOFlags(false, false, true),	// PRODUCE, SAVE, LOAD      <--- the same for all the rest below
+				new IOFlags(true, true, false),		// PRODUCE, SAVE, LOAD      <--- the same for all the rest below
 				true,								// Log details              <--- the same for all the rest below - the log boolean always comes after IOFlags
 				/* floor overview */
 				null,								// FloorSettings object for floors overview
-				false,								// Floors Overview ON/OFF switch 
+				true,								// Floors Overview ON/OFF switch 
 				/* temperature */
 				28,									// Seed
 				1,									// Octaves
 				0.03,								// Frequency
-				new IOFlags(false, false, true),
+				new IOFlags(true, true, false),
 				true,
 				/* humidity */
 				2041,								// Seed
 				1,									// Octaves
 				0.03,								// Frequency
-				new IOFlags(false, false, true),
+				new IOFlags(true, true, false),
 				true,
 				/* biomes */
-				new IOFlags(false, false, true),
+				new IOFlags(true, true, false),
 				true,
 				/* rivers */
-				40,									// Number of rivers
+				4,									// Number of rivers
 				5,									// Minimum floor the rivers will start at (inclusive)
-				15,									// Minimum manhattan distance between river origins. If you set it too high then you might encounter an infinite loop.
+				10,									// Minimum manhattan distance between river origins. If you set it too high then you might encounter an infinite loop.
 				new IOFlags(true, true, false),
 				true,
 				/* borders */

@@ -338,7 +338,7 @@ public class MyzoGEN {
 		_OutputSaver.save();
 		System.out.println("");
 		
-		_Output.debugCheck();
+		//_Output.debugCheck();
 		
 		long millis = System.currentTimeMillis() - time;
 		System.out.println("Generation time: "+String.format("%d min, %d sec", 

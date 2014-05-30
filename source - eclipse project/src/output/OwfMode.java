@@ -42,6 +42,15 @@ import other.Tiles;
  * | floor		|	byte	|	 8b		|  a byte indicating the floor				|
  * | biome		|	byte	|	 8b		|  a byte indicating the biome				|
  * | type		|	byte	|    8b		|  a byte indicating the tile type			|
+ * | borderF1	|	byte	|	 8b		|  a byte indicating border flag one		| < New in V2
+ * | borderF2	|	byte	|	 8b		|  a byte indicating border flag two		| < New in V2
+ * +--------------------------------------------------------------------------------+
+ * 
+ * 
+ * 
+ * 
+ * >>>>>>>>>>>>>>> OLD (VERSION 1) <<<<<<<<<<<<<<<<<<<<
+ * \ type ...\
  * | edge		|	byte	|	 8b		|  the edge border for biomes				|
  * | corner		|	byte	|	 8b		|  the corner border for biomes				|
  * | b_type		|	byte	|	 8b		|  the border type for biomes				|
@@ -49,6 +58,7 @@ import other.Tiles;
  * | corner		|	byte	|	 8b		|  the corner border for heights			|
  * | b_type		|	byte	|	 8b		|  the border type for heights				|
  * +--------------------------------------------------------------------------------+
+ * >>>>>>>>>>>>>>>> /OLD <<<<<<<<<<<<<<<<<<<<<<<
  * 
  * ===================================== LICENSE =================================
  * Copyright 2013 Radoslaw Skupnik.
@@ -73,7 +83,7 @@ import other.Tiles;
  **/
 public class OwfMode extends SaveMode {
 
-	private final short VERSION = 1;
+	private final short VERSION = 2;
 	
 	private String filepath;
 	private ByteBuffer tempBuffer;
@@ -146,16 +156,18 @@ public class OwfMode extends SaveMode {
 		writePoint(tile.origin);
 		writeByte((byte) tile.floor);
 		writeByte(tile.biome);
-		if (tile.wall)
-			writeByte(Tiles.STONE_WALL);		//HARDCODED: if the tile is a wall it's type is set to 32.
-		else
-			writeByte(tile.tile);
-		writeByte(tile.borderBiomesEdges);
+		//if (tile.wall)
+			//writeByte(Tiles.STONE_WALL);		//HARDCODED: if the tile is a wall it's type is set to 32.
+		//else
+		writeByte(tile.tile);
+		writeByte(tile.borderFlagOne);
+		writeByte(tile.borderFlagTwo);
+		/**writeByte(tile.borderBiomesEdges);
 		writeByte(tile.borderBiomesCorners);
 		writeByte(tile.borderBiomesType);
 		writeByte(tile.borderHeightEdges);
 		writeByte(tile.borderHeightCorners);
-		writeByte(tile.borderHeightType);
+		writeByte(tile.borderHeightType);**/
 	}
 	
 	private void writeBoolean(boolean input) {
@@ -224,7 +236,7 @@ public class OwfMode extends SaveMode {
 		out += (chunksX * chunksY) * 5;
 		for (Tile tile : output.getTilesArray().values()) {
 			out += 5;
-			out += 9;
+			out += 5;
 		}
 		
 		return out;

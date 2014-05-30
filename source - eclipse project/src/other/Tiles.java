@@ -57,7 +57,7 @@ public class Tiles {
 		}
 	}
 	
-	public static byte tileToPrecedence(byte t) {
+	public static byte getPrecedence(byte t) {
 		switch (t) {
 			case WATER:
 				return WATER_PRECEDENCE;

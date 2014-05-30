@@ -41,6 +41,34 @@ public class Borders {
 	public static final byte SURROUNDED = 29;
 	public static final byte SURROUNDED_CORNER = 30;
 	
+	public static byte calculateBiomeBorder(Tile tile, Point[] surrPoints) {
+		byte output = 0;
+		Tile[] sTiles = Utils.surroundingPointsToTiles(surrPoints);		// Pattern produced by this method matches the encoding.
+		for (int i = 0; i < sTiles.length; i++) {
+			Tile sTile = sTiles[i];
+			// Higher precedence tiles overlap the lower precedence ones, so we are only interested in higher precedence tiles surrounding the chosen tile.
+			if (tile != null && sTile != null && 									// If both exist &...
+				Tiles.getPrecedence(sTile.tile) > Tiles.getPrecedence(tile.tile) && // ...higher precedence &...
+				sTile.tile != tile.tile) {											// ...different type.
+				output = setBit(output, i, 1);		// "i" can be simply used here because the pattern produced by Utils is compatible.
+			}
+		}
+		return output;
+	}
+	
+	public static byte calculateHeightBorder(Tile tile, Point[] surrPoints) {
+		byte output = 0;
+		Tile[] sTiles = Utils.surroundingPointsToTiles(surrPoints);		// Pattern produced by this method matches the encoding.
+		for (int i = 0; i < sTiles.length; i++) {
+			Tile sTile = sTiles[i];
+			// Only interested in surrounding tiles that are lower.
+			if (tile != null && sTile != null && tile.floor > sTile.floor) {
+				output = setBit(output, i, 1);		// "i" can be simply used here because the pattern produced by Utils is compatible.
+			}
+		}
+		return output;
+	}
+	
 	/**
 	 * Calculates the type of border judging by tiles surrounding the tile.
 	 * It considers the tile type.
@@ -147,7 +175,7 @@ public class Borders {
 			if (t1 == null || t2 == null) {
 				return false;
 			} else {
-				if ((t1.tile == t2.tile && !(Tiles.tileToPrecedence(t1.tile) > Tiles.tileToPrecedence(t2.tile)) || t1.floor != t2.floor))
+				if ((t1.tile == t2.tile && !(Tiles.getPrecedence(t1.tile) > Tiles.getPrecedence(t2.tile)) || t1.floor != t2.floor))
 					return false;
 				else return true;
 			}
@@ -240,7 +268,7 @@ public class Borders {
 		if (biome) {
 			for (Tile t : tileArray) {
 				if (i < 4) {
-					if (t != null && (t.tile != tile.tile && Tiles.tileToPrecedence(t.tile) > Tiles.tileToPrecedence(tile.tile)) && t.floor == tile.floor) {
+					if (t != null && (t.tile != tile.tile && Tiles.getPrecedence(t.tile) > Tiles.getPrecedence(tile.tile)) && t.floor == tile.floor) {
 						out = false;
 						break;
 					}
@@ -277,5 +305,13 @@ public class Borders {
 			}
 		}
 		return out;
+	}
+	
+	/**
+	 * Sets the bit at a position indicated by "index" in byte "flag"
+	 * to the value indiciated by "val".
+	 */
+	private static byte setBit(byte flag, int index, int val) {
+		return (byte) (((val > 0 ? 1 : 0) << index) | flag);
 	}
 }
