@@ -35,6 +35,10 @@ public class Tile {
 	public int riverID = -1;
 	public byte borderFlagOne = 0;	// Used for biome borders.
 	public byte borderFlagTwo = 0;	// Used for height borders.
+	public byte borderTypeFlagOne = 0;	// These consist of two half-bytes (4-bit values merged into a single byte).
+	public byte borderTypeFlagTwo = 0;
+	public boolean isForestArea = false;
+	public gObject object;
 	/**public byte borderBiomesEdges = (byte) 255; //255 indicates there is no border.
 	public byte borderBiomesCorners = (byte) 255;
 	public byte borderBiomesType = (byte) 255;

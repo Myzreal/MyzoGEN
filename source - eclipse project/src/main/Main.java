@@ -181,6 +181,14 @@ public class Main {
 				/* borders */
 				new IOFlags(true, true, false),
 				true,
+				/* forests */
+				308,								// Seed
+				1,									// Octaves
+				0.18,								// Frequency
+				25,									// Tree base chance in a forest area.
+				0,									// Tree base chance in a non-forest area.
+				new IOFlags(true, true, false),
+				true,
 				/* saving modes/formats */
 				new SaveMode[] {					// This must contain a SaveMode[] array.
 					new OwfMode(					// OWF mode will save the output as an .owf file (OutlanderWorldFragmented file).

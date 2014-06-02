@@ -41,8 +41,7 @@ public class Borders {
 	public static final byte SURROUNDED = 29;
 	public static final byte SURROUNDED_CORNER = 30;
 	
-	public static byte calculateBiomeBorder(Tile tile, Point[] surrPoints) {
-		byte output = 0;
+	public static void calculateBiomeData(Tile tile, Point[] surrPoints) {
 		Tile[] sTiles = Utils.surroundingPointsToTiles(surrPoints);		// Pattern produced by this method matches the encoding.
 		for (int i = 0; i < sTiles.length; i++) {
 			Tile sTile = sTiles[i];
@@ -50,23 +49,20 @@ public class Borders {
 			if (tile != null && sTile != null && 									// If both exist &...
 				Tiles.getPrecedence(sTile.tile) > Tiles.getPrecedence(tile.tile) && // ...higher precedence &...
 				sTile.tile != tile.tile) {											// ...different type.
-				output = setBit(output, i, 1);		// "i" can be simply used here because the pattern produced by Utils is compatible.
+				tile.borderFlagOne = setBit(tile.borderFlagOne, i, 1);		// "i" can be simply used here because the pattern produced by Utils is compatible.
 			}
 		}
-		return output;
 	}
 	
-	public static byte calculateHeightBorder(Tile tile, Point[] surrPoints) {
-		byte output = 0;
+	public static void calculateHeightData(Tile tile, Point[] surrPoints) {
 		Tile[] sTiles = Utils.surroundingPointsToTiles(surrPoints);		// Pattern produced by this method matches the encoding.
 		for (int i = 0; i < sTiles.length; i++) {
 			Tile sTile = sTiles[i];
 			// Only interested in surrounding tiles that are lower.
 			if (tile != null && sTile != null && tile.floor > sTile.floor) {
-				output = setBit(output, i, 1);		// "i" can be simply used here because the pattern produced by Utils is compatible.
+				tile.borderFlagTwo = setBit(tile.borderFlagTwo, i, 1);		// "i" can be simply used here because the pattern produced by Utils is compatible.
 			}
 		}
-		return output;
 	}
 	
 	/**

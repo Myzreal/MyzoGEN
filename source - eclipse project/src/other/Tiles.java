@@ -30,7 +30,7 @@ public class Tiles {
 	public static final byte SAVANNAH = 3;
 	public static final byte SAND_DESERT = 4;
 	
-	public static final byte STONE_WALL = 32;
+	public static final byte STONE_WALL = 5;
 	
 	//Border precedence decides which tile will be the border at in case of two different tiles bordering.
 	//For example if grass and savannah meet then the border will be at savannah tile because prec is lower and grass will be the bordering type because prec is higher.

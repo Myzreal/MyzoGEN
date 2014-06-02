@@ -8,17 +8,19 @@ import main.MyzoGEN;
 
 import org.apache.commons.io.FileUtils;
 
-import other.Biomes;
 import other.Point;
 import other.Tile;
-import other.Tiles;
+import other.gObject.ObjectType;
 
 /**
  * OWF format stands for OutlanderWorldFragmented format.
+ * 
  * NOTES:
  * 		* String is preceeded by a short value indicating the following string's length.
  * 
  * The file format is as following:
+ * 
+ * 								<MAP_NAME>.OWF
  * +--------------------------------------------------------------------------------+
  * |	LABEL	|	TYPE	|	LENGTH	|					INFO					|
  * +------------+-----------+-----------+-------------------------------------------+
@@ -42,23 +44,32 @@ import other.Tiles;
  * | floor		|	byte	|	 8b		|  a byte indicating the floor				|
  * | biome		|	byte	|	 8b		|  a byte indicating the biome				|
  * | type		|	byte	|    8b		|  a byte indicating the tile type			|
- * | borderF1	|	byte	|	 8b		|  a byte indicating border flag one		| < New in V2
- * | borderF2	|	byte	|	 8b		|  a byte indicating border flag two		| < New in V2
+ * | borderF1	|	byte	|	 8b		|  a byte indicating the border flag 1		| < New in V2
+ * | borderF2	|	byte	|	 8b		|  a byte indicating the border flag 2		| < New in V2
+ * | obj_type	|	byte	|	 8b		|  info about type of object, 0 if none		|
  * +--------------------------------------------------------------------------------+
  * 
  * 
  * 
- * 
- * >>>>>>>>>>>>>>> OLD (VERSION 1) <<<<<<<<<<<<<<<<<<<<
- * \ type ...\
- * | edge		|	byte	|	 8b		|  the edge border for biomes				|
- * | corner		|	byte	|	 8b		|  the corner border for biomes				|
- * | b_type		|	byte	|	 8b		|  the border type for biomes				|
- * | edge		|	byte	|	 8b		|  the edge border for heights				|
- * | corner		|	byte	|	 8b		|  the corner border for heights			|
- * | b_type		|	byte	|	 8b		|  the border type for heights				|
+ * >>>>>>>>>>>>>> OLD <<<<<<<<<<<<<<<<
+ * \ type ... \
+ * | borders	|   custom	|	 26b	| data compressed into bits, see below		|
+ * | obj_type   |	byte	|	 8b		| info about type of object, 0 if none		|
  * +--------------------------------------------------------------------------------+
- * >>>>>>>>>>>>>>>> /OLD <<<<<<<<<<<<<<<<<<<<<<<
+ * >>>>>>>>>>>>>> /OLD <<<<<<<<<<<<<<<<<
+ * 
+ * 								BORDERS DATA COMPRESSION			<< DEPRECATED (V1)
+ * 
+ * bbe      |  bbc    |bbt  |  bhe    | bhc     |bht  |		TOTAL: 26 bits needed
+ * 1 0 1 0 1 1 0 1 0 1 1 0 1 1 0 1 0 1 1 0 1 0 1 1 0 1
+ *   byte1        |        byte2  |     byte3     |  byte4	TOTAL: 3 bytes and 2 bits needed (4 bytes)
+ *   
+ * bbe - border biome edge
+ * bbc - border biome corner
+ * bbt - border biome type
+ * bhe - border height edge
+ * bhc - border height corner
+ * bht - border height type
  * 
  * ===================================== LICENSE =================================
  * Copyright 2013 Radoslaw Skupnik.
@@ -160,21 +171,16 @@ public class OwfMode extends SaveMode {
 			//writeByte(Tiles.STONE_WALL);		//HARDCODED: if the tile is a wall it's type is set to 32.
 		//else
 		writeByte(tile.tile);
+		//writeBordersData(tile);
 		writeByte(tile.borderFlagOne);
 		writeByte(tile.borderFlagTwo);
-		/**writeByte(tile.borderBiomesEdges);
-		writeByte(tile.borderBiomesCorners);
-		writeByte(tile.borderBiomesType);
-		writeByte(tile.borderHeightEdges);
-		writeByte(tile.borderHeightCorners);
-		writeByte(tile.borderHeightType);**/
+		if (tile.object != null)
+			writeByte(tile.object.getType());
+		else writeByte(ObjectType.NO_OBJECT.getByteValue());
 	}
 	
 	private void writeBoolean(boolean input) {
-		if (input)
-			tempBuffer.put((byte) 1);
-		else
-			tempBuffer.put((byte) 0);
+		tempBuffer.put(input ? (byte) 1 : (byte) 0);
 	}
 	
 	private void writeByte(byte input) {
@@ -236,7 +242,7 @@ public class OwfMode extends SaveMode {
 		out += (chunksX * chunksY) * 5;
 		for (Tile tile : output.getTilesArray().values()) {
 			out += 5;
-			out += 5;
+			out += 8;
 		}
 		
 		return out;

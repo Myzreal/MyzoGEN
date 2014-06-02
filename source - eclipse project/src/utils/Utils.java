@@ -243,4 +243,15 @@ public class Utils {
 		return (((double)temp)/Math.pow(10,c));
 	}
 	
+	/**
+	 * Integrates two half-bytes (4-bit values) into one byte.
+	 * hb1 | hb1 | hb1 | hb1 ||| hb2 | hb2 | hb2 | hb2
+	 * Half-bytes takes values from 0 to 15.
+	 */
+	public static byte packByte(byte halfByte1, byte halfByte2) {
+		byte output = (byte) (halfByte1 << 4);
+		output = (byte) (output | halfByte2);
+		return output;
+	}
+	
 }

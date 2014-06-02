@@ -5,6 +5,7 @@ import java.util.Random;
 
 import other.Point;
 import other.Tile;
+import other.gObject;
 
 import utils.Utils;
 
@@ -106,6 +107,35 @@ public class Output {
 		if (t != null)
 			t.floor = Utils.calculateFloor(height, MyzoGEN.getFloorSettings());
 		else {
+			System.out.println("Tile at "+pnt+" not found.");
+			return;
+		}
+	}
+	
+	/**
+	 * Sets the tile at the specified point to be a forest area.
+	 * @param pnt
+	 */
+	public void setForestArea(Point pnt) {
+		Tile t = TILES.get(pnt);
+		if (t != null) {
+			t.isForestArea = true;
+		} else {
+			System.out.println("Tile at "+pnt+" not found.");
+			return;
+		}
+	}
+	
+	/**
+	 * Sets an object at this tile.
+	 * @param pnt
+	 * @param obj
+	 */
+	public void setObject(Point pnt, gObject obj) {
+		Tile t = TILES.get(pnt);
+		if (t != null) {
+			t.object = obj;
+		} else {
 			System.out.println("Tile at "+pnt+" not found.");
 			return;
 		}

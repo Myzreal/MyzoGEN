@@ -3,6 +3,7 @@ package main;
 import generators.BaseTerrainGenerator;
 import generators.BiomesGenerator;
 import generators.FloorsOverviewGenerator;
+import generators.ForestGenerator;
 import generators.HumidityGenerator;
 import generators.NoiseGenerator;
 import generators.RiversGenerator;
@@ -158,6 +159,13 @@ public class MyzoGEN {
 	private boolean			_RiversLogDetails				= false;
 	private IOFlags			_BordersIOFlags					= new IOFlags(false, false, false);
 	private	boolean			_BordersLogDetails				= false;
+	private int				_ForestsSeed					= 0;
+	private int				_ForestsOctaves					= 1;
+	private double			_ForestsFrequency				= 0.18;
+	private int				_ForestsBaseChanceForest		= 50;
+	private int				_ForestsBaseChanceNonForest		= 0;
+	private IOFlags			_ForestsIOFlags					= new IOFlags(false, false, false);
+	private boolean			_ForestsLogDetails				= false;
 	private SaveMode[]		_SaveModes						= null;
 	
 	/**
@@ -171,6 +179,7 @@ public class MyzoGEN {
 	private BiomesGenerator			_BiomesGenerator			= null;
 	private RiversGenerator			_RiversGenerator			= null;
 	private TileBordersGenerator	_BordersGenerator			= null;
+	private ForestGenerator			_ForestGenerator			= null;
 	
 	/**
 	 * Those variables hold the various data that can be produced.
@@ -216,7 +225,8 @@ public class MyzoGEN {
 	 */
 	public MyzoGEN(String name, int wscx, int wscy, int seed, int bto, double btf, IOFlags btflags, boolean btld, FloorSettings floorset, boolean floorsov,
 							  int tseed, int toct, double tfreq, IOFlags tflags, boolean tld, int hseed, int hoct, double hfreq, IOFlags hflags, boolean hld,
-							  IOFlags bflags, boolean bld, int rmax, int rminf, int rmind, IOFlags rflags, boolean rld, IOFlags boflags, boolean bold, SaveMode[] modes) {
+							  IOFlags bflags, boolean bld, int rmax, int rminf, int rmind, IOFlags rflags, boolean rld, IOFlags boflags, boolean bold,
+							  int fseed, int foct, double ffreq, int fbchf, int fbchnf, IOFlags fflags, boolean fld, SaveMode[] modes) {
 		_instance = this;
 		
 		_Name = name;
@@ -248,6 +258,13 @@ public class MyzoGEN {
 		_RiversLogDetails = rld;
 		_BordersIOFlags = boflags;
 		_BordersLogDetails = bold;
+		_ForestsSeed = fseed;
+		_ForestsOctaves = foct;
+		_ForestsFrequency = ffreq;
+		_ForestsBaseChanceForest = fbchf;
+		_ForestsBaseChanceNonForest = fbchnf;
+		_ForestsIOFlags = fflags;
+		_ForestsLogDetails = fld;
 		_SaveModes = modes;
 		
 		generate();
@@ -326,6 +343,14 @@ public class MyzoGEN {
 		String boerr = _BordersGenerator.generate();
 		System.out.println(":: Done! ::");
 		System.out.println(":: BordersGenerator result: "+boerr);
+		if (boerr != "No errors.") return;
+		System.out.println("");
+		
+		System.out.println(":: Generating forests ::");
+		_ForestGenerator = new ForestGenerator(_Name, _WorldSizeChunksX, _WorldSizeChunksY, _ForestsSeed, _ForestsOctaves, _ForestsFrequency, _ForestsBaseChanceForest, _ForestsBaseChanceNonForest, _ForestsIOFlags, _ForestsLogDetails);
+		String ferr = _ForestGenerator.generate();
+		System.out.println(":: Done! ::");
+		System.out.println(":: ForestGenerator result: "+ferr);
 		if (boerr != "No errors.") return;
 		System.out.println("");
 		

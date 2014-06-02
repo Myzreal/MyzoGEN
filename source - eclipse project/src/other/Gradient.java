@@ -186,6 +186,17 @@ public class Gradient {
 			gradientColors[0] = new ColorCafe(0, 0, 0, 255);
 			gradientPoints[1] = 1.0000;
 			gradientColors[1] = new ColorCafe(255, 255, 255, 255);
+		} else if (type.equals("forest")) {
+			gradientPoints = new double[4];
+			gradientColors = new ColorCafe[4];
+			gradientPoints[0] = -1.0000;
+			gradientColors[0] = new ColorCafe(0, 0, 0, 255);
+			gradientPoints[1] = -0.0001;
+			gradientColors[1] = new ColorCafe(1, 1, 1, 255);
+			gradientPoints[2] = 0;
+			gradientColors[2] = new ColorCafe(254, 254, 254, 255);
+			gradientPoints[3] = 1.0000;
+			gradientColors[3] = new ColorCafe(255, 255, 255, 255);
 		}
 	}
 

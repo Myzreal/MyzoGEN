@@ -42,6 +42,7 @@ public class Biomes {
 	
 	public static HashMap<Integer, Byte> BIOME_COLORS = new HashMap<Integer, Byte>();
 	public static HashMap<Byte, Byte> BIOME_TILES = new HashMap<Byte, Byte>();
+	public static HashMap<Byte, Integer> BIOME_VEGETATION_CHANCE = new HashMap<Byte, Integer>();
 	
 	static {
 		BIOME_COLORS.put(DESERT_COLOR.getRGB(), DESERT);
@@ -55,6 +56,12 @@ public class Biomes {
 		BIOME_TILES.put(SWAMP_RAIN_FOREST, Tiles.GRASS);
 		BIOME_TILES.put(MODERATE, Tiles.GRASS);
 		BIOME_TILES.put(TUNDRA, Tiles.SNOW);
+		
+		BIOME_VEGETATION_CHANCE.put(DESERT, -40);
+		BIOME_VEGETATION_CHANCE.put(SAVANNAH, -20);
+		BIOME_VEGETATION_CHANCE.put(SWAMP_RAIN_FOREST, 20);
+		BIOME_VEGETATION_CHANCE.put(MODERATE, 3);
+		BIOME_VEGETATION_CHANCE.put(TUNDRA, 3);
 	}
 
 	public static String biomeToString(byte b) {
@@ -89,6 +96,10 @@ public class Biomes {
 			default:
 				return MODERATE_COLOR;
 		}
+	}
+	
+	public static Integer getVegetationModifier(byte biome) {
+		return BIOME_VEGETATION_CHANCE.get(biome);
 	}
 	
 	public static byte calculateBiome(BufferedImage biomesPNG, int temp, int hum) {

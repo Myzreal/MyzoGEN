@@ -90,7 +90,7 @@ public class TileBordersGenerator {
 					tile.borderHeightCorners = bc;
 					tile.borderHeightType = Tiles.STONE_WALL;**/
 					
-					tile.borderFlagTwo = Borders.calculateHeightBorder(tile, surrPoints);
+					Borders.calculateHeightData(tile, surrPoints);
 					
 					produceWall(tile, surrPoints, bordersImage);
 					
@@ -106,7 +106,7 @@ public class TileBordersGenerator {
 					tile.borderBiomesCorners = bc;
 					tile.borderBiomesType = getBorderTypeBiomes(tile, surrPoints);**/
 					
-					tile.borderFlagOne = Borders.calculateBiomeBorder(tile, surrPoints);
+					Borders.calculateBiomeData(tile, surrPoints);
 					
 					if (ioflags.SAVE) {
 						//System.out.println(tile.borderFlagOne);
