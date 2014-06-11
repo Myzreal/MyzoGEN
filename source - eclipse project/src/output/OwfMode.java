@@ -242,7 +242,7 @@ public class OwfMode extends SaveMode {
 		out += (chunksX * chunksY) * 5;
 		for (Tile tile : output.getTilesArray().values()) {
 			out += 5;
-			out += 8;
+			out += 6;
 		}
 		
 		return out;
